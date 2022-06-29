@@ -5,34 +5,24 @@ namespace CodingKata.Wallets
 {
     public class WalletService
     {
-        public List<Wallet> GetWalletsByUser(User user)
+        private IUserSession _userSession;
+        public WalletService(IUserSession userSession)
         {
-            List<Wallet> walletList = new List<Wallet>();
-            User currentUser = UserSession.GetInstance().GetLoggedUser();
-            bool isFriend = false;
-
-            if (currentUser != null)
-            {
-                foreach (User friend in user.GetFriends())
-                {
-                    if (friend.Equals(currentUser))
-                    {
-                        isFriend = true;
-                        break;
-                    }
-                }
-
-                if (isFriend)
-                {
-                    walletList = WalletRepository.FindWalletsByUser(user);
-                }
-
-                return walletList;
-            }
-            else
+            _userSession = userSession;
+        }
+        public IEnumerable<Wallet> GetWalletsByUser(User user)
+        {
+            User currentUser = _userSession.GetLoggedUser();
+            if (currentUser == null)
             {
                 throw new UserNotLoggedInException();
             }
+            if (user.isFriend(currentUser))
+            {
+                return WalletRepository.FindWalletsByUser(user);
+            }
+            return Enumerable.Empty<Wallet>();
+
         }
     }
 }

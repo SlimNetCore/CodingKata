@@ -2,19 +2,11 @@
 
 namespace CodingKata.Users;
 
-public class UserSession
+public class UserSession : IUserSession
 {
-    private static readonly UserSession Session = new();
-
-    private UserSession() { }
-
-    public static UserSession GetInstance()
-    {
-        return Session;
-    }
 
     public User GetLoggedUser()
     {
-        throw new ThisIsAStubException("UserSession.IsUserLoggedIn() should not be called in an unit test");
+        return new User();
     }
 }
